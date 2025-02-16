@@ -16,13 +16,13 @@ Install dependencies
 Start the server in the background
 
 ```bash
-  python pygate.py start
+  python pylogin.py start
 ```
 
 Stop the background server process
 
 ```bash
-  python pygate.py stop
+  python pylogin.py stop
 ```
 
 
