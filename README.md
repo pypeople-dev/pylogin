@@ -1,4 +1,3 @@
-
 # pylogin
 
 Manage logins within a single page. This project utilizes email address based organizations to direct a user's login to a specific web application server. 

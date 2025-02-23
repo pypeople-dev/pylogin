@@ -18,7 +18,7 @@ class Database:
         self.create_indexes()
 
     def initialize_collections(self):
-        collections = ['user-details']
+        collections = ['organization-details']
         for collection in collections:
             if collection not in self.db.list_collection_names():
                 self.db.create_collection(collection)
@@ -30,9 +30,12 @@ class Database:
         ])
 
         # TODO: Remove this before merging to master
-        if not self.db.users.find_one({"organization": "pypeople.com"}):
-            self.db.users.insert_one({
-                "server": "https://pypeople-pygate-dev.pypeople.com",
+        organization_details_collection = self.db.get_collection('organization-details')
+        if organization_details_collection.find_one({"organization": "pypeople.com"}):
+            organization_details_collection.delete_one({"organization": "pypeople.com"})
+        if not organization_details_collection.find_one({"organization": "pypeople.com"}):
+            organization_details_collection.insert_one({
+                "server": "localhost:5001",
                 "organization": "pypeople.com"
             })
 
@@ -43,3 +46,4 @@ database.initialize_collections()
 database.create_indexes()
 
 db = database.db
+

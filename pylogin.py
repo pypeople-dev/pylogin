@@ -6,6 +6,7 @@ import subprocess
 import signal
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from routes import router
 
 logging.basicConfig(level=logging.INFO)
 
@@ -13,7 +14,7 @@ pylogin = FastAPI()
 
 # Load environment variables
 PID_FILE = os.getenv("PID_FILE", "pylogin.pid")
-origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 
 # Add CORS middleware
 pylogin.add_middleware(
@@ -23,6 +24,7 @@ pylogin.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+pylogin.include_router(router, prefix="/pylogin", tags=["pylogin"])
 
 def start():
     if os.path.exists(PID_FILE):
@@ -63,8 +65,9 @@ def stop():
         print(f"pylogin with PID {pid} has been stopped.")
     except ProcessLookupError:
         print("Process already terminated.")
-    
-    os.remove(PID_FILE)
+    finally:
+        if os.path.exists(PID_FILE):    
+            os.remove(PID_FILE)
 
 def run():
     server_port = int(os.getenv('PORT', 5001))

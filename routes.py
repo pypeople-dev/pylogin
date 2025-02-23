@@ -10,9 +10,9 @@ from fastapi.responses import JSONResponse
 
 from service import Service
 
-api_router = APIRouter()
+router = APIRouter()
 
-@api_router.post("/api/organization")
+@router.post("/api/organization")
 async def user_details(request: Request):
     try:
         await Service.add_organization(request)
@@ -20,11 +20,14 @@ async def user_details(request: Request):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@api_router.post("/api/organization-details")
-async def user_details(request: Request):
+@router.post("/api/organization-details")
+async def organization_details(request: Request):
     try:
-        user = await Service.get_organization(request.get('organization'))
-        user.pop('_id')
-        return JSONResponse(content=user, status_code=201)
+        request_data = await request.json()
+        organization = await Service.get_organization(request_data.get('organization'))
+        organization.pop('_id')
+        return JSONResponse(content=organization, status_code=200)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal Server Error")
